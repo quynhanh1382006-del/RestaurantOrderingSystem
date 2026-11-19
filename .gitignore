@@ -1,0 +1,23 @@
+﻿# Environment and secrets
+.env
+.env.*
+!.env.example
+**/secrets.json
+
+# .NET build
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

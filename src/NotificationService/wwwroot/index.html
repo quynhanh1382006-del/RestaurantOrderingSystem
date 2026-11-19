@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurant - Order Notifications</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+</head>
+<body>
+    <h2>THEO DOI TRANG THAI DON HANG</h2>
+
+    <input id="orderId" style="width:400px"
+        value="8eb12e42-b1b0-4ede-bd74-89c329693f7c">
+
+    <button onclick="connect()">Ket noi</button>
+
+    <h3>Trang thai ket noi:</h3>
+    <p id="connection">Chua ket noi</p>
+
+    <h3>Thong bao:</h3>
+    <ul id="notifications"></ul>
+
+    <script>
+        let connection;
+
+        async function connect() {
+            const orderId = document.getElementById("orderId").value;
+
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl("/notificationHub")
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("OrderStatusChanged", data => {
+                const li = document.createElement("li");
+                li.textContent =
+                    "Don hang: " + data.orderId +
+                    " | Trang thai: " + data.status;
+
+                document.getElementById("notifications")
+                    .appendChild(li);
+            });
+
+            try {
+                await connection.start();
+                await connection.invoke("JoinOrderGroup", orderId);
+
+                document.getElementById("connection").textContent =
+                    "Da ket noi SignalR va tham gia nhom don hang!";
+            } catch (err) {
+                document.getElementById("connection").textContent =
+                    "Loi: " + err;
+            }
+        }
+    </script>
+</body>
+</html>
